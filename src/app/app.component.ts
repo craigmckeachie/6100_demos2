@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { of, Observer } from 'rxjs';
+import { of, Observer, interval } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -8,12 +8,14 @@ import { of, Observer } from 'rxjs';
 })
 export class AppComponent implements OnInit {
   ngOnInit(): void {
-    const observable$ = of(1, 2, 3);
+    // Emits ascending numbers, one every second (1000ms)
+    const observable$ = interval(1000);
     const observer: Observer<any> = {
       next: x => console.log(x),
       complete: () => console.log('completed'),
       error: x => console.log(x)
     };
-    observable$.subscribe(observer);
+    const subscription = observable$.subscribe(observer);
+    setTimeout(() => subscription.unsubscribe(), 5000);
   }
 }
