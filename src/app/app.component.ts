@@ -1,28 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { fromEvent, of } from 'rxjs';
+import { of, Observer } from 'rxjs';
 
 @Component({
   selector: 'app-root',
-  template: `
-    <button>Click Me</button> <input type="text" />
-  `,
+  template: ``,
   styles: []
 })
 export class AppComponent implements OnInit {
   ngOnInit(): void {
     const observable$ = of(1, 2, 3);
-    observable$.subscribe(x => console.log(x));
-
-    // don't do direct DOM manipulation in Angular components
-    // we'll see how to avoid this later in these demos
-    const button = document.querySelector('button');
-    const clicks$ = fromEvent(button, 'click');
-    clicks$.subscribe(x => console.log(x));
-
-    const input = document.querySelector('input');
-    const keyupEvents$ = fromEvent(input, 'keyup');
-    keyupEvents$.subscribe((x: Event) =>
-      console.log((<HTMLInputElement>x.target).value)
-    );
+    const observer: Observer<any> = {
+      next: x => console.log(x),
+      complete: () => console.log('completed'),
+      error: x => console.log(x)
+    };
+    observable$.subscribe(observer);
   }
 }
