@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { of, Observer, interval } from 'rxjs';
+import { map, tap, filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -15,7 +16,15 @@ export class AppComponent implements OnInit {
       complete: () => console.log('completed'),
       error: x => console.log(x)
     };
-    const subscription = observable$.subscribe(observer);
-    setTimeout(() => subscription.unsubscribe(), 5000);
+
+    const observableCommingOutOfThePipe$ = observable$.pipe(
+      filter(x => x % 2 === 0)
+    );
+
+    observableCommingOutOfThePipe$.subscribe(observer);
+
+    // interval(1000)
+    //   .pipe(filter(x => x % 2 === 0))
+    //   .subscribe(x => console.log(x));
   }
 }
