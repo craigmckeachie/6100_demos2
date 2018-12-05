@@ -1,21 +1,38 @@
 import { Component, OnInit } from '@angular/core';
-import { of, Observer, interval } from 'rxjs';
+import { Subject, of } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
-  template: ``,
+  template: `
+    <input
+      type="text"
+      #term
+      (keyup)="search(term.value)"
+      placeholder="search"
+    />
+    <br />
+    <p *ngFor="let message of messages">{{ message }}</p>
+  `,
   styles: []
 })
 export class AppComponent implements OnInit {
+  messages: string[] = [];
+  private searchTermStream$ = new Subject<string>();
+
   ngOnInit(): void {
-    // Emits ascending numbers, one every second (1000ms)
-    const observable$ = interval(1000);
-    const observer: Observer<any> = {
-      next: x => console.log(x),
-      complete: () => console.log('completed'),
-      error: x => console.log(x)
-    };
-    const subscription = observable$.subscribe(observer);
-    setTimeout(() => subscription.unsubscribe(), 5000);
+    this.searchTermStream$
+      .pipe(
+        debounceTime(1000),
+        distinctUntilChanged()
+        // switchMap((term: string) => {
+        //   return of(`new observable: ${term}`);
+        // })
+      )
+      .subscribe(term => this.messages.push(` ${term}`));
+  }
+
+  search(term: string) {
+    this.searchTermStream$.next(term);
   }
 }
