@@ -29,7 +29,7 @@ export class AppComponent implements OnInit {
         //   return of(`new observable: ${term}`);
         // })
       )
-      .subscribe(term => this.messages.push(` ${term}`));
+      .subscribe(term => this.messages.push(` http call for: ${term}`));
   }
 
   search(term: string) {
